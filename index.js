@@ -3,24 +3,45 @@ const Letter = require('./letter');
 const inquirer = require('inquirer');
 
 var words = ['cat', 'dog', 'frog'];
-var selectedWord = words[Math.floor(Math.random() * Math.floor(words.length))];
+// var selectedWord = words[Math.floor(Math.random() * Math.floor(words.length))];
 
-var wordArray = [];
+// var wordArray = [];
 
-for(var i = 0; i<selectedWord.length; i++) {
-    wordArray.push(new Letter(selectedWord.charAt(i)));
-}
+// for(var i = 0; i<selectedWord.length; i++) {
+//     wordArray.push(new Letter(selectedWord.charAt(i)));
+// }
 
-word = new Word(wordArray)
+// word = new Word(wordArray)
+
 
 var lives = 7;
 var guessed = [];
 
 var wordWithGuesses = '';
-wordWithGuesses = word.returnString(wordWithGuesses)
-console.log( wordWithGuesses + '\t\t\t\tLives: ' + lives);
 
-callPrompt();
+newGame();
+
+function newGame() {  
+    var selectedWord = words[Math.floor(Math.random() * Math.floor(words.length))];
+
+    var wordArray = [];
+
+    for(var i = 0; i<selectedWord.length; i++) {
+        wordArray.push(new Letter(selectedWord.charAt(i)));
+    }
+
+    word = new Word(wordArray)
+
+    lives = 7;
+    guessed = [];
+    
+    wordWithGuesses = '';
+
+    wordWithGuesses = word.returnString(wordWithGuesses)
+    console.log( wordWithGuesses + '\t\t\t\tLives: ' + lives);
+    
+    callPrompt();
+}
 
 function callPrompt() {  
     inquirer.prompt([
@@ -39,7 +60,13 @@ function callPrompt() {
 
             wordWithGuesses = word.returnString(wordWithGuesses)
 
-            if(wordWithGuesses.indexOf(guess.letter) == -1) lives--;
+            if(wordWithGuesses.indexOf(guess.letter) == -1) {
+                lives--;
+                if(lives == 0 ) {
+                    console.log('YOU LOSE!')
+                    askToPlayAgain();
+                }
+            }
         }
         else {
             console.log('Already guessed that!')
@@ -58,4 +85,18 @@ function checkIfGuessed(wordWithGuesses) {
         if(wordWithGuesses.charAt(i) == '_') return callPrompt();
     }
     console.log('YOU WIN!!')
+    askToPlayAgain();
+}
+
+function askToPlayAgain() {  
+    inquirer.prompt([
+        {
+            message: 'Play Again?',
+            type: 'list',
+            choices: ['Yes', 'No'],
+            name: 'again'
+        }
+    ]).then(function (answer) {  
+        if(answer.again == 'Yes') newGame();
+    })
 }
