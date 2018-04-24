@@ -1,46 +1,55 @@
 const Word = require('./word');
 const Letter = require('./letter');
 const inquirer = require('inquirer');
+var request = require('request');
 
-var words = ['cat', 'dog', 'frog'];
-// var selectedWord = words[Math.floor(Math.random() * Math.floor(words.length))];
-
-// var wordArray = [];
-
-// for(var i = 0; i<selectedWord.length; i++) {
-//     wordArray.push(new Letter(selectedWord.charAt(i)));
-// }
-
-// word = new Word(wordArray)
-
-
-var lives = 7;
-var guessed = [];
-
-var wordWithGuesses = '';
+var words = [],
+    lives = 7,
+    guessed = [],
+    wordWithGuesses = '';
 
 newGame();
 
-function newGame() {  
-    var selectedWord = words[Math.floor(Math.random() * Math.floor(words.length))];
-
-    var wordArray = [];
-
-    for(var i = 0; i<selectedWord.length; i++) {
-        wordArray.push(new Letter(selectedWord.charAt(i)));
-    }
-
-    word = new Word(wordArray)
-
-    lives = 7;
-    guessed = [];
+function newGame() { 
     
-    wordWithGuesses = '';
+    inquirer.prompt([
+        {
+            message: 'Choose a category.',
+            type: 'list',
+            choices: ['ocean', 'animal', 'country'],
+            name: 'choice'
+        }
+    ]).then(function (answer) {  
 
-    wordWithGuesses = word.returnString(wordWithGuesses)
-    console.log( wordWithGuesses + '\t\t\t\tLives: ' + lives);
-    
-    callPrompt();
+        request('https://api.datamuse.com/words?topics='+answer.choice+'&max=4', function (err, res, body) {  
+            JSON.parse(body).forEach(element => {
+                // console.log(element.word)
+                words.push(element.word)
+            })
+            var selectedWord = words[Math.floor(Math.random() * Math.floor(words.length))];
+
+            var wordArray = [];
+        
+            for(var i = 0; i<selectedWord.length; i++) {
+                wordArray.push(new Letter(selectedWord.charAt(i)));
+            }
+        
+            word = new Word(wordArray)
+        
+            lives = 7;
+            guessed = [];
+            
+            wordWithGuesses = '';
+        
+            wordWithGuesses = word.returnString(wordWithGuesses)
+            console.log( wordWithGuesses + '\t\t\t\tLives: ' + lives);
+            
+            callPrompt();
+        })
+
+       
+    })
+   
 }
 
 function callPrompt() {  
