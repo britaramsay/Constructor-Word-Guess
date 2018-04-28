@@ -66,7 +66,7 @@ function callPrompt() {
             // Call guessLetter function with this letter
             word.guessLetter(String(guess.letter));
             // Return string of underscores and letter guessed if it was in the word
-            wordWithGuesses = word.returnString(wordWithGuesses)
+            wordWithGuesses = word.returnString(wordWithGuesses)    
             // If the letter was not in the word
             if(wordWithGuesses.indexOf(guess.letter) == -1) {
                 // Decrement lives
@@ -77,16 +77,29 @@ function callPrompt() {
                     // Ask to start a new game
                     askToPlayAgain();
                 }
+                else {
+                    // Display the word with correct guesses
+                    console.log(wordWithGuesses + '\t\t\t\tLives: ' + lives);
+                    // Check if they have guessed all letters
+                    checkIfGuessed(wordWithGuesses);
+                }
+            }
+            else {
+                // Display the word with correct guesses
+                console.log(wordWithGuesses + '\t\t\t\tLives: ' + lives);
+                // Check if they have guessed all letters
+                checkIfGuessed(wordWithGuesses);
             }
         }
         else {
             // Tell user if the letter was already guessed
             console.log('Already guessed that!')
+            // Display the word with correct guesses
+            console.log(wordWithGuesses + '\t\t\t\tLives: ' + lives);
+            // Check if they have guessed all letters
+            checkIfGuessed(wordWithGuesses);
         }
-        // Display the word with correct guesses
-        console.log(wordWithGuesses + '\t\t\t\tLives: ' + lives);
-        // Check if they have guessed all letters
-        checkIfGuessed(wordWithGuesses);
+        
     });
 }
 
